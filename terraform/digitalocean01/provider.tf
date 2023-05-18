@@ -12,5 +12,5 @@ terraform {
 }
 
 provider "digitalocean" {
-  token = "xxxxxxxxxxxxxxxx"
+  token = "xxx"
 }

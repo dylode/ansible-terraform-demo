@@ -8,7 +8,7 @@ providers:
         - xxx
     resources:
       - name: webserver
-        state: absent
+        state: present
         type: droplet
         image: ubuntu-22-10-x64
         region: fra1
@@ -17,7 +17,7 @@ providers:
         groups:
           - nginx
       - name: mysql
-        state: absent
+        state: present
         type: droplet
         image: ubuntu-22-10-x64
         region: fra1
