@@ -1,0 +1,26 @@
+---
+providers:
+  - name: digitalocean01
+    type: digitalocean
+    global:
+      do_token: xxx
+      ssh_keys: 
+        - xxx
+    resources:
+      - name: webserver
+        state: absent
+        type: droplet
+        image: ubuntu-22-10-x64
+        region: fra1
+        size: s-1vcpu-512mb-10gb
+        count: 2
+        groups:
+          - nginx
+      - name: mysql
+        state: absent
+        type: droplet
+        image: ubuntu-22-10-x64
+        region: fra1
+        size: s-1vcpu-512mb-10gb
+        groups:
+          - mysql

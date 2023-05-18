@@ -1,0 +1,7 @@
+---
+- name: update resources for a specific provider
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - terraform_executer

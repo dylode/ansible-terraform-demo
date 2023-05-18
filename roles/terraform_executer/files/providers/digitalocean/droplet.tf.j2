@@ -1,0 +1,18 @@
+{% for item in target_provider_active_resources | selectattr('type', 'eq', 'droplet') %}
+resource "digitalocean_droplet" "{{ item.name }}" {
+  image    = "{{ item.image }}"
+  name     = "{{ item.name }}-${count.index + 1}"
+  region   = "{{ item.region }}"
+  size     = "{{ item.size }}"
+  ssh_keys = {{ target_provider.global.ssh_keys | to_json }}
+  tags     = {{ item.groups | to_json }}
+  count    = {{ item.count | default(1) }}
+}
+{% endfor %}
+
+{% for item in unique_groups %}
+resource "ansible_group" "{{ item }}" {
+  name     = "{{ item }}"
+  children = {{ target_provider_active_resources | selectattr('groups', 'contains', item) | map(attribute='name') | to_json }}
+}
+{% endfor %}

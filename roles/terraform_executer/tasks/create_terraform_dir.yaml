@@ -1,0 +1,32 @@
+---
+- name: check if terraform root directory exists
+  stat:
+    path: "{{ terraform_path }}"
+  register: terraform_path_stat
+
+- name: create terraform root directory
+  file:
+    path: "{{ terraform_path }}"
+    state: directory
+  when: not terraform_path_stat.stat.exists
+
+- name: generate path to provider terraform directory
+  set_fact:
+    target_provider_terraform_path: "{{ terraform_path }}/{{ target_provider.name }}/"
+
+- name: check if target provider terraform directory exists
+  stat:
+    path: "{{ target_provider_terraform_path }}"
+  register: target_provider_terraform_path_stat
+
+- name: create target provider terraform directory
+  file:
+    path: "{{ target_provider_terraform_path }}"
+    state: directory
+  when: not target_provider_terraform_path_stat.stat.exists
+
+- name: create inventory
+  copy:
+        content: |
+          plugin: cloud.terraform.terraform_provider
+        dest: "{{ target_provider_terraform_path }}/inventory.yaml"

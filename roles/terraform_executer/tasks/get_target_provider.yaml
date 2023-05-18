@@ -1,0 +1,29 @@
+---
+- name: retrieving available providers
+  set_fact:
+    available_providers: "{{ providers | map(attribute='name') | list }}"
+
+- name: checking if target provider exists
+  assert:
+    that:
+      - target_provider_name in available_providers
+    fail_msg: "target provider {{target_provider_name}} does not exists."
+    success_msg: "target provider {{target_provider_name}} does exists."
+
+- name: retrieving target provider
+  set_fact:
+    target_provider: "{{ providers | selectattr('name', 'eq', target_provider_name) | first }}"
+
+- name: check if provider type is supported
+  block:
+      - stat:
+          path: "{{ role_path }}/files/providers/{{ target_provider.type }}"
+        register: target_provider_type_dir
+      - assert:
+          that: target_provider_type_dir.stat.exists
+          fail_msg: "provider type {{ target_provider.type }} is not supported"
+          success_msg: "provider type {{ target_provider.type }} is supported"
+
+- name: get active resources
+  set_fact:
+    target_provider_active_resources: "{{ target_provider.resources | selectattr('state', 'eq', 'present') }}"
