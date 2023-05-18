@@ -16,6 +16,7 @@ providers:
         count: 2
         groups:
           - nginx
+          - node_exporter
       - name: mysql
         state: present
         type: droplet
@@ -24,3 +25,4 @@ providers:
         size: s-1vcpu-512mb-10gb
         groups:
           - mysql
+          - node_exporter

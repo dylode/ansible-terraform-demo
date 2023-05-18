@@ -4,7 +4,7 @@ resource "digitalocean_droplet" "webserver" {
   region   = "fra1"
   size     = "s-1vcpu-512mb-10gb"
   ssh_keys = ["xxx"]
-  tags     = ["nginx"]
+  tags     = ["nginx", "node_exporter"]
   count    = 2
 }
 resource "digitalocean_droplet" "mysql" {
@@ -13,13 +13,17 @@ resource "digitalocean_droplet" "mysql" {
   region   = "fra1"
   size     = "s-1vcpu-512mb-10gb"
   ssh_keys = ["xxx"]
-  tags     = ["mysql"]
+  tags     = ["mysql", "node_exporter"]
   count    = 1
 }
 
 resource "ansible_group" "nginx" {
   name     = "nginx"
   children = ["webserver"]
+}
+resource "ansible_group" "node_exporter" {
+  name     = "node_exporter"
+  children = ["webserver", "mysql"]
 }
 resource "ansible_group" "mysql" {
   name     = "mysql"
