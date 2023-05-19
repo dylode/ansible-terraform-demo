@@ -1,4 +1,4 @@
 ---
-ansible_python_interpreter: /usr/bin/python3.10
+ansible_python_interpreter: /usr/local/bin/python3
 target_provider_name: "none"
 terraform_path: "{{ role_path }}/../../terraform/"
