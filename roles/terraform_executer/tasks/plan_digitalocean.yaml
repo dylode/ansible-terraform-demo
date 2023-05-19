@@ -2,11 +2,11 @@
 - name: define supported resource types
   set_fact:
     supported_resource_types:
-      - droplet
+      droplet: digitalocean_droplet
 
 - name: check if each resource type exists
   assert:
-    that: item.type in supported_resource_types
+    that: item.type in supported_resource_types.keys()
     fail_msg: "resource type {{ item.type }} not supported"
     success_msg: "resource type {{ item.type }} is supported"
   loop: "{{ target_provider_active_resources | list }}"

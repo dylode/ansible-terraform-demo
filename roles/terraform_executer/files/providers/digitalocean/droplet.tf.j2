@@ -1,7 +1,5 @@
-{%- set type_to_resource = {'droplet': 'digitalocean_droplet'} -%}
-
-{% for resource in target_provider_active_resources | selectattr('type', 'eq', 'droplet') -%}
-resource "{{ type_to_resource[resource.type] }}" "{{ resource.name }}" {
+{%- for resource in target_provider_active_resources | selectattr('type', 'eq', 'droplet') -%}
+resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
   image    = "{{ resource.image }}"
   name     = "{{ resource.name }}-${count.index + 1}"
   region   = "{{ resource.region }}"
@@ -14,7 +12,7 @@ resource "{{ type_to_resource[resource.type] }}" "{{ resource.name }}" {
 {% endfor %}
 {% for resource in target_provider_active_resources -%}
 resource "ansible_host" "{{ resource.name }}" {
-  for_each = toset({{ type_to_resource[resource.type] }}.{{ resource.name }}.*.ipv4_address)
+  for_each = toset({{ supported_resource_types[resource.type] }}.{{ resource.name }}.*.ipv4_address)
   name   = each.key
   groups = {{ resource.groups | to_json }}
 
