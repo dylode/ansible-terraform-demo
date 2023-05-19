@@ -1,18 +1,27 @@
-{% for item in target_provider_active_resources | selectattr('type', 'eq', 'droplet') %}
-resource "digitalocean_droplet" "{{ item.name }}" {
-  image    = "{{ item.image }}"
-  name     = "{{ item.name }}-${count.index + 1}"
-  region   = "{{ item.region }}"
-  size     = "{{ item.size }}"
-  ssh_keys = {{ target_provider.global.ssh_keys | to_json }}
-  tags     = {{ item.groups | to_json }}
-  count    = {{ item.count | default(1) }}
-}
-{% endfor %}
+{%- set type_to_resource = {'droplet': 'digitalocean_droplet'} -%}
 
-{% for item in unique_groups %}
-resource "ansible_group" "{{ item }}" {
-  name     = "{{ item }}"
-  children = {{ target_provider_active_resources | selectattr('groups', 'contains', item) | map(attribute='name') | to_json }}
+{% for resource in target_provider_active_resources | selectattr('type', 'eq', 'droplet') -%}
+resource "{{ type_to_resource[resource.type] }}" "{{ resource.name }}" {
+  image    = "{{ resource.image }}"
+  name     = "{{ resource.name }}-${count.index + 1}"
+  region   = "{{ resource.region }}"
+  size     = "{{ resource.size }}"
+  ssh_keys = {{ target_provider.global.ssh_keys | to_json }}
+  tags     = {{ resource.groups | to_json }}
+  count    = {{ resource.count | default(1) }}
 }
+
+{% endfor %}
+{% for resource in target_provider_active_resources -%}
+resource "ansible_host" "{{ resource.name }}" {
+  for_each = toset({{ type_to_resource[resource.type] }}.{{ resource.name }}.*.ipv4_address)
+  name   = each.key
+  groups = {{ resource.groups | to_json }}
+
+  variables = {
+    providerName = "{{ target_provider_name }}"
+    providerType = "{{ target_provider.type }}"
+  }
+}
+
 {% endfor %}

@@ -2,8 +2,6 @@
 
 - import_tasks: create_terraform_dir.yaml
 
-- import_tasks: get_unique_groups.yaml
-
 - import_tasks: plan_digitalocean.yaml
   when: target_provider.type == "digitalocean"
 

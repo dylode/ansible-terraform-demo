@@ -29,4 +29,5 @@
   copy:
         content: |
           plugin: cloud.terraform.terraform_provider
+          project_path: {{ target_provider_terraform_path | realpath }}
         dest: "{{ target_provider_terraform_path }}/inventory.yaml"

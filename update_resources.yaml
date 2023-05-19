@@ -3,5 +3,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
+  vars_files:
+    - resources.yaml
   roles:
     - terraform_executer

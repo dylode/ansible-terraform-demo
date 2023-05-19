@@ -1,4 +1,0 @@
----
-- name: retrieving all unique groups
-  set_fact:
-    unique_groups: "{{ target_provider.resources | json_query('[].groups[]') | unique }}"
