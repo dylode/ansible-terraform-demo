@@ -18,15 +18,16 @@ resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
 {% for resource in target_provider_active_resources -%}
 resource "ansible_host" "{{ resource.name }}" {
   for_each = {
-    for index, server in {{ supported_resource_types[resource.type] }}.{{ resource.name }} : index => server.ipv4_address
+    for index, server in {{ supported_resource_types[resource.type] }}.{{ resource.name }} : server.name => server.ipv4_address
   }
 
-  name   = each.value
+  name   = each.key
   groups = {{ resource.groups | to_json }}
 
   variables = {
-    providerName = "{{ target_provider_name }}"
-    providerType = "{{ target_provider.type }}"
+    provider_name = "{{ target_provider_name }}"
+    provider_type = "{{ target_provider.type }}"
+    ansible_host = each.value
   }
 }
 

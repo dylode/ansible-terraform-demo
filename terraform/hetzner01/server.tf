@@ -30,29 +30,31 @@ resource "hcloud_server" "database" {
 
 resource "ansible_host" "webserver" {
   for_each = {
-    for index, server in hcloud_server.webserver : index => server.ipv4_address
+    for index, server in hcloud_server.webserver : server.name => server.ipv4_address
   }
 
-  name   = each.value
+  name   = each.key
   groups = ["webserver", "monitored"]
 
   variables = {
-    providerName = "hetzner01"
-    providerType = "hetzner"
+    provider_name = "hetzner01"
+    provider_type = "hetzner"
+    ansible_host = each.value
   }
 }
 
 resource "ansible_host" "database" {
   for_each = {
-    for index, server in hcloud_server.database : index => server.ipv4_address
+    for index, server in hcloud_server.database : server.name => server.ipv4_address
   }
 
-  name   = each.value
+  name   = each.key
   groups = ["database", "monitored"]
 
   variables = {
-    providerName = "hetzner01"
-    providerType = "hetzner"
+    provider_name = "hetzner01"
+    provider_type = "hetzner"
+    ansible_host = each.value
   }
 }
 

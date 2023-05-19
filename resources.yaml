@@ -17,7 +17,7 @@ providers:
         - f1:77:5a:66:bf:57:d0:a9:b1:8b:03:e1:7f:35:c8:62
     resources:
       - name: webserver
-        state: absent
+        state: present
         type: droplet
         image: debian-11-x64
         region: fra1
@@ -27,7 +27,7 @@ providers:
           - webserver
           - monitored
       - name: database
-        state: absent
+        state: present
         type: droplet
         image: debian-11-x64
         region: fra1

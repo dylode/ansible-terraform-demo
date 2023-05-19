@@ -5,7 +5,7 @@ resource "digitalocean_droplet" "webserver" {
   size     = "s-1vcpu-512mb-10gb"
   ssh_keys = ["f1:77:5a:66:bf:57:d0:a9:b1:8b:03:e1:7f:35:c8:62"]
   tags     = ["webserver", "monitored"]
-  count    = 3
+  count    = 4
 }
 
 resource "digitalocean_droplet" "database" {
@@ -20,29 +20,31 @@ resource "digitalocean_droplet" "database" {
 
 resource "ansible_host" "webserver" {
   for_each = {
-    for index, droplet in digitalocean_droplet.webserver : index => droplet.ipv4_address
+    for index, droplet in digitalocean_droplet.webserver : droplet.name => droplet.ipv4_address
   }
 
-  name   = each.value
+  name   = each.key
   groups = ["webserver", "monitored"]
 
   variables = {
-    providerName = "digitalocean01"
-    providerType = "digitalocean"
+    ansible_host  = each.value
+    provider_name = "digitalocean01"
+    provider_type = "digitalocean"
   }
 }
 
 resource "ansible_host" "database" {
   for_each = {
-    for index, droplet in digitalocean_droplet.database : index => droplet.ipv4_address
+    for index, droplet in digitalocean_droplet.database : droplet.name => droplet.ipv4_address
   }
 
-  name   = each.value
+  name   = each.key
   groups = ["database", "monitored"]
 
   variables = {
-    providerName = "digitalocean01"
-    providerType = "digitalocean"
+    ansible_host  = each.value
+    provider_name = "digitalocean01"
+    provider_type = "digitalocean"
   }
 }
 
