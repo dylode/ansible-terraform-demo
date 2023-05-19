@@ -1,27 +1,30 @@
 resource "digitalocean_droplet" "webserver" {
-  image    = "ubuntu-22-10-x64"
+  image    = "debian-11-x64"
   name     = "webserver-${count.index + 1}"
   region   = "fra1"
   size     = "s-1vcpu-512mb-10gb"
   ssh_keys = ["f1:77:5a:66:bf:57:d0:a9:b1:8b:03:e1:7f:35:c8:62"]
-  tags     = ["nginx", "node_exporter"]
+  tags     = ["webserver", "monitored"]
   count    = 3
 }
 
 resource "digitalocean_droplet" "database" {
-  image    = "ubuntu-22-10-x64"
+  image    = "debian-11-x64"
   name     = "database-${count.index + 1}"
   region   = "fra1"
   size     = "s-1vcpu-512mb-10gb"
   ssh_keys = ["f1:77:5a:66:bf:57:d0:a9:b1:8b:03:e1:7f:35:c8:62"]
-  tags     = ["mysql", "node_exporter"]
+  tags     = ["database", "monitored"]
   count    = 1
 }
 
 resource "ansible_host" "webserver" {
-  for_each = toset(digitalocean_droplet.webserver.*.ipv4_address)
-  name   = each.key
-  groups = ["nginx", "node_exporter"]
+  for_each = {
+    for index, droplet in digitalocean_droplet.webserver : index => droplet.ipv4_address
+  }
+
+  name   = each.value
+  groups = ["webserver", "monitored"]
 
   variables = {
     providerName = "digitalocean01"
@@ -30,9 +33,12 @@ resource "ansible_host" "webserver" {
 }
 
 resource "ansible_host" "database" {
-  for_each = toset(digitalocean_droplet.database.*.ipv4_address)
-  name   = each.key
-  groups = ["mysql", "node_exporter"]
+  for_each = {
+    for index, droplet in digitalocean_droplet.database : index => droplet.ipv4_address
+  }
+
+  name   = each.value
+  groups = ["database", "monitored"]
 
   variables = {
     providerName = "digitalocean01"

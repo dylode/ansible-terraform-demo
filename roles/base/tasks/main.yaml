@@ -1,0 +1,29 @@
+---
+- name: update apt cache
+  apt:
+    update_cache: yes
+
+- name: install packages
+  apt:
+    name:
+      - glances
+      - git
+      - tmux
+    state: present
+
+- name: create user accounts
+  user:
+    name: "{{ item }}"
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: set motd
+  copy:
+    dest: /etc/update-motd.d/99-ansible-terraform-demo
+    content: |
+      #!/bin/sh
+      echo "\e[32mThis server is created and managed by ansible-terraform-demo!\e[0m\n\n"
+    mode: 0755
+  notify: restart ssh service
+

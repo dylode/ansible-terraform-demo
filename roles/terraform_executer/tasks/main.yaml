@@ -1,3 +1,4 @@
+---
 - import_tasks: get_target_provider.yaml
 
 - import_tasks: create_terraform_dir.yaml

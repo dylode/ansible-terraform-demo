@@ -1,0 +1,28 @@
+---
+- name: run base role
+  hosts: all
+  roles:
+    - base
+  tags:
+    - base
+
+- name: run webserver role
+  hosts: webserver
+  roles:
+    - webserver
+  tags:
+    - webserver
+
+- name: run monitored role
+  hosts: monitored
+  roles:
+    - monitored
+  tags:
+    - monitored
+
+- name: run database role
+  hosts: database
+  roles:
+    - database
+  tags:
+    - database

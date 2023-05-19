@@ -19,19 +19,19 @@ providers:
       - name: webserver
         state: present
         type: droplet
-        image: ubuntu-22-10-x64
+        image: debian-11-x64
         region: fra1
         size: s-1vcpu-512mb-10gb
         count: 3
         groups:
-          - nginx
-          - node_exporter
+          - webserver
+          - monitored
       - name: database
         state: present
         type: droplet
-        image: ubuntu-22-10-x64
+        image: debian-11-x64
         region: fra1
         size: s-1vcpu-512mb-10gb
         groups:
-          - mysql
-          - node_exporter
+          - database
+          - monitored
