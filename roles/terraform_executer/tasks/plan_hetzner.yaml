@@ -1,0 +1,24 @@
+---
+- name: define supported resource types
+  set_fact:
+    supported_resource_types:
+      server: hcloud_server
+
+- name: check if each resource type exists
+  assert:
+    that: item.type in supported_resource_types.keys()
+    fail_msg: "resource type {{ item.type }} not supported"
+    success_msg: "resource type {{ item.type }} is supported"
+  loop: "{{ target_provider_active_resources | list }}"
+  loop_control:
+    label: "{{ item.name }} (type: {{ item.type }})"
+
+- name: render provider.tf
+  template:
+    src: "{{ role_path }}/files/providers/hetzner/provider.tf.j2"
+    dest: "{{ target_provider_terraform_path }}/provider.tf"
+
+- name: render server.tf
+  template:
+    src: "{{ role_path }}/files/providers/hetzner/server.tf.j2"
+    dest: "{{ target_provider_terraform_path }}/server.tf"

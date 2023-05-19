@@ -3,7 +3,7 @@ providers:
   - name: digitalocean01
     type: digitalocean
     global:
-      do_token: !vault |
+      token: !vault |
           $ANSIBLE_VAULT;1.2;AES256;demo
           30653433343932623766303238343839653131336563373437653661363762643233313466353230
           3633653666383633373666353265336361323266646162610a396365343834633739633161643331
@@ -17,21 +17,57 @@ providers:
         - f1:77:5a:66:bf:57:d0:a9:b1:8b:03:e1:7f:35:c8:62
     resources:
       - name: webserver
-        state: present
+        state: absent
         type: droplet
         image: debian-11-x64
         region: fra1
         size: s-1vcpu-512mb-10gb
-        count: 3
+        count: 4
+        groups:
+          - webserver
+          - monitored
+      - name: database
+        state: absent
+        type: droplet
+        image: debian-11-x64
+        region: fra1
+        size: s-1vcpu-512mb-10gb
+        groups:
+          - database
+          - monitored
+  - name: hetzner01
+    type: hetzner
+    global:
+      token: !vault |
+          $ANSIBLE_VAULT;1.2;AES256;demo
+          36626266326463323336396136626562333938306162646137333664353864613531633863373664
+          6631323932376665373835653230616137366633326263650a306137316435326435346162623937
+          32316636393063343034353533663765306463643538303264396530656636656663386432633464
+          3738653836343338620a396639643438376630353261303163663935666566643434336436386338
+          33323238396531633065646631613433356166373237626431333139643431646466666131343035
+          66643865666233613639353565323132326536623134633130333863393438623365386563623134
+          36646137393531383336343532323930633263376564633364333438396433356538376237613864
+          62346366383136626463
+      ssh_keys:
+        - dylan@dylan-mint
+    resources:
+      - name: webserver
+        state: present
+        type: server
+        image: debian-11
+        location: fsn1
+        server_type: cx11
+        count: 2
         groups:
           - webserver
           - monitored
       - name: database
         state: present
-        type: droplet
-        image: debian-11-x64
-        region: fra1
-        size: s-1vcpu-512mb-10gb
+        type: server
+        image: debian-11
+        location: fsn1
+        server_type: cx11
+        count: 3
         groups:
           - database
           - monitored

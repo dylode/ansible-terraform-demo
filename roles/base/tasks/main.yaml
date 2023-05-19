@@ -6,7 +6,7 @@
 - name: install packages
   apt:
     name:
-      - glances
+      - htop
       - git
       - tmux
     state: present

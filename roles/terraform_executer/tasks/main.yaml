@@ -6,4 +6,7 @@
 - import_tasks: plan_digitalocean.yaml
   when: target_provider.type == "digitalocean"
 
+- import_tasks: plan_hetzner.yaml
+  when: target_provider.type == "hetzner"
+
 - import_tasks: execute_plan.yaml

@@ -8,4 +8,5 @@
   cloud.terraform.terraform:
     project_path: "{{ target_provider_terraform_path }}"
     check_destroy: "{{ not destroy_mode }}"
+    force_init: true
     state: present

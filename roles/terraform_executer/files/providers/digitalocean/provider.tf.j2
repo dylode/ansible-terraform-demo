@@ -5,12 +5,12 @@ terraform {
       version = "2.28.1"
     }
     ansible = {
-      version = "1.1.0"
       source  = "ansible/ansible"
+      version = "1.1.0"
     }
   }
 }
 
 provider "digitalocean" {
-  token = "{{ target_provider.global.do_token }}"
+  token = "{{ target_provider.global.token }}"
 }
