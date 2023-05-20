@@ -1,0 +1,12 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: waiting for hosts to be up
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: 22
+        delay: 1
+        timeout: 120
+        state: started
+      connection: local

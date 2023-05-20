@@ -2,11 +2,11 @@
 - name: show destroy mode info
   debug:
     msg: destory mode is not active. if you want to destroy resources please set destroy_mode
-  when: not destroy_mode
+  when: not destroy_mode | bool
 
 - name: execute terraform
   cloud.terraform.terraform:
     project_path: "{{ target_provider_terraform_path }}"
-    check_destroy: "{{ not destroy_mode }}"
+    check_destroy: "{{ not destroy_mode | bool }}"
     force_init: true
     state: present

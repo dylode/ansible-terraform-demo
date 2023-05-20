@@ -3,5 +3,17 @@
 providers=$(cat resources.yaml | yq -r '.providers[].name')
 
 selected_provider=$(echo "$providers" | fzf --prompt="Select provider: ")
+echo "Selected provider: $selected_provider"
 
-ansible-playbook -i "localhost," update_resources.yaml -e "target_provider_name=$selected_provider" --vault-id demo@vault
+destroy_mode=false
+read -r -p "Do you expect to delete resources? [y/N] " response
+if [[ "$response" == "yes" || "$response" == "y" ]]; then
+    destroy_mode=true
+fi
+
+read -r -p "Are you sure you want to proceed? [y/N] " response
+if [[ "$response" != "yes" && "$response" != "y" ]]; then
+    exit 1
+fi
+
+ansible-playbook -i "localhost," update_resources.yaml -e "target_provider_name=$selected_provider" -e "destroy_mode=$destroy_mode" --vault-id demo@vault
