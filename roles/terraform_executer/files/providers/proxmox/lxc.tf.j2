@@ -1,0 +1,60 @@
+{%- for resource in target_provider_active_resources | selectattr('type', 'eq', 'lxc') -%}
+variable "{{ resource.name }}-ips" {
+  default = {
+    {% for ip in resource.ip %}
+        "{{ loop.index - 1 }}" = "{{ ip }}"
+    {% endfor %}
+  }
+}
+
+resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
+  target_node  = "{{ target_provider.global.target_node }}"
+  hostname     = "{{ resource.name }}-${count.index + 1}"
+  ostemplate   = "{{ resource.template_storage | default(target_provider.global.default_lxc_template_storage) }}:vztmpl/{{ resource.template }}"
+  unprivileged = {{ resource.unprivileged | default(true) | lower }}
+  count        = {{ resource.count | default(1) }}
+  pool         = "{{ resource.pool | default(target_provider.global.default_lxc_pool) }}"
+  start        = true
+  onboot       = true
+  ssh_public_keys = <<-EOT
+{% for key in target_provider.global.ssh_keys %}
+    {{ key }}
+{% endfor %}
+  EOT
+
+  rootfs {
+    storage = "{{ resource.volume_storage | default(target_provider.global.default_lxc_volume_storage) }}"
+    size    = "{{ resource.size }}"
+  }
+
+  network {
+    name   = "{{ resource.network_name | default(target_provider.global.default_lxc_network_name) }}"
+    bridge = "{{ resource.network_bridge | default(target_provider.global.default_lxc_network_bridge) }}"
+    ip     = "${lookup(var.{{ resource.name }}-ips, count.index)}"
+    ip6    = "{{ resource.ip6[count.index] | default('auto') }}"
+    gw     = "{{ resource.gateway }}"
+    {% if resource.vlan_tag %}
+    tag    = "{{ resource.vlan_tag }}"
+    {% endif %}
+  }
+}
+
+{% endfor %}
+{% for resource in target_provider_active_resources -%}
+resource "ansible_host" "{{ resource.name }}" {
+  for_each = {
+    for index, lxc in {{ supported_resource_types[resource.type] }}.{{ resource.name }} : lxc.hostname => lxc.network[0].ip
+  }
+
+  name   = each.key
+  groups = {{ resource.groups | to_json }}
+
+  variables = {
+    ansible_host  = split("/", each.value)[0]
+    provider_name = "{{ target_provider_name }}"
+    provider_type = "{{ target_provider.type }}"
+    resource_type = "{{ resource.type }}"
+  }
+}
+
+{% endfor %}

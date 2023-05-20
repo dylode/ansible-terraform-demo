@@ -23,6 +23,7 @@ resource "ansible_host" "{{ resource.name }}" {
     ansible_host  = each.value
     provider_name = "{{ target_provider_name }}"
     provider_type = "{{ target_provider.type }}"
+    resource_type = "{{ resource.type }}"
   }
 }
 

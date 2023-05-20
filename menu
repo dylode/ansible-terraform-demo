@@ -12,7 +12,7 @@ if [ "$action" = "build" ]; then
 fi
 
 if [ "$action" = "debug" ]; then
-    docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/root/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh
 fi
 
 if [ "$action" = "update-resources" ]; then
@@ -28,9 +28,9 @@ if [ "$action" = "decrypt" ]; then
 fi
 
 if [ "$action" = "update-site" ]; then
-    docker run -v "$(pwd):/app" -v "/home/$USER/.ssh/:/root/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_site.sh "${@:2}"
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/root/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_site.sh "${@:2}"
 fi
 
 if [ "$action" = "update" ]; then
-    docker run -v "$(pwd):/app" -v "/home/$USER/.ssh/:/root/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update.sh "${@:2}"
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/root/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update.sh "${@:2}"
 fi

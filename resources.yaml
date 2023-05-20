@@ -52,7 +52,7 @@ providers:
         - dylan@dylan-mint
     resources:
       - name: webserver
-        state: present
+        state: absent
         type: server
         image: debian-11
         location: fsn1
@@ -70,4 +70,37 @@ providers:
         count: 3
         groups:
           - database
+          - monitored
+  - name: pve01
+    type: proxmox
+    global:
+      api_url: https://xxxx:8006/api2/json
+      token_id: xxxx
+      token_secret: xxx
+      target_node: pve01
+      default_lxc_template_storage: xxx
+      default_lxc_volume_storage: xxxx
+      default_lxc_pool: dylan_pool
+      default_lxc_network_name: eth0
+      default_lxc_network_bridge: vmbr100
+      ssh_keys:
+        - ssh-rsa xxxxx
+    resources:
+      - name: webserver
+        state: present
+        type: lxc
+        count: 5
+        template: debian-11-standard_11.6-1_amd64.tar.zst
+        size: 4G
+        vlan_tag: 10
+        gateway: 10.187.10.1
+        ip: 
+          - 10.187.10.30/24
+          - 10.187.10.31/24
+          - 10.187.10.32/24
+          - 10.187.10.33/24
+          - 10.187.10.34/24
+        ip6: auto
+        groups:
+          - webserver
           - monitored
