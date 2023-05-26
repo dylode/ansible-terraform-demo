@@ -16,4 +16,6 @@ if [[ "$response" != "yes" && "$response" != "y" ]]; then
     exit 1
 fi
 
+./scripts/decrypt
 ansible-playbook -i "localhost," update_resources.yaml -e "target_provider_name=$selected_provider" -e "destroy_mode=$destroy_mode" --vault-id demo@vault
+./scripts/encrypt

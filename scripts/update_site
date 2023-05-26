@@ -11,4 +11,6 @@ if [[ "$response" != "yes" && "$response" != "y" ]]; then
     exit 1
 fi
 
+./scripts/decrypt
 ansible-playbook -i terraform/$selected_provider/inventory.yaml $@ site.yaml
+./scripts/encrypt
