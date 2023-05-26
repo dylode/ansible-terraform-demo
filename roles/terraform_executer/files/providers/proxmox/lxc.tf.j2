@@ -23,7 +23,7 @@ resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
   EOT
 
   rootfs {
-    storage = "{{ resource.volume_storage | default(target_provider.vars.defaults.volume_storage) }}"
+    storage = "{{ resource.disk_storage | default(target_provider.vars.defaults.disk_storage) }}"
     size    = "{{ resource.size }}"
   }
 
@@ -39,7 +39,7 @@ resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
 }
 
 {% endfor %}
-{% for resource in target_provider_active_resources -%}
+{% for resource in target_provider_active_resources | selectattr('type', 'eq', 'lxc') -%}
 resource "ansible_host" "{{ resource.name }}" {
   for_each = {
     for index, lxc in {{ supported_resource_types[resource.type] }}.{{ resource.name }} : lxc.hostname => lxc.network[0].ip

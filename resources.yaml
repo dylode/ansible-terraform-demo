@@ -100,7 +100,7 @@ providers:
       target_node: pve01
       defaults:
         template_storage: dylan_additional_storage
-        volume_storage: dylan_storage
+        disk_storage: dylan_storage
         pool: ansible_terraform_pool
         lxc_network:
           name: eth0
@@ -151,3 +151,29 @@ providers:
         groups:
           - webserver
           - monitored
+      - name: database
+        state: absent
+        type: vm
+        count: 6
+        cloudinit_template: debian-11-cloudinit
+        cores: 2
+        memory: 2048
+        network:
+          vlan_tag: 10
+          gateway: 10.187.10.1
+          ip: 
+            - 10.187.10.40/24
+            - 10.187.10.41/24
+            - 10.187.10.42/24
+            - 10.187.10.43/24
+            - 10.187.10.44/24
+            - 10.187.10.45/24
+        disks:
+          - slot: 0
+            size: 4G
+        groups:
+          - database
+          - monitored
+          - webserver
+
+

@@ -1,0 +1,75 @@
+{%- for resource in target_provider_active_resources | selectattr('type', 'eq', 'vm') -%}
+variable "{{ resource.name }}-ips" {
+  default = {
+    {% for ip in resource.network.ip %}
+        "{{ loop.index - 1 }}" = "{{ ip }}"
+    {% endfor %}
+  }
+}
+
+resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
+  target_node  = "{{ target_provider.vars.target_node }}"
+  name     = "{{ target_provider.name }}-{{ resource.name }}-${count.index + 1}"
+  clone        = "{{ resource.cloudinit_template }}"
+
+  agent = 1
+  os_type = "cloud-init"
+  cores = {{ resource.cores }}
+  sockets = 1
+  cpu = "host"
+  memory = "{{ resource.memory }}"
+  scsihw = "virtio-scsi-pci"
+  bootdisk = "scsi0"
+
+  disk {
+    slot = 0
+    size = "{{ resource.disks[0].size }}"
+    type = "scsi"
+    storage = "{{ resource.disks[0].storage | default(target_provider.vars.defaults.disk_storage) }}"
+  }
+
+  network {
+    model = "virtio"
+    bridge = "{{ resource.network.bridge | default(target_provider.vars.defaults.lxc_network.bridge) }}"
+    {% if resource.network.vlan_tag %}
+    tag    = "{{ resource.network.vlan_tag }}"
+    {% endif %}
+  }
+
+  lifecycle {
+    ignore_changes = [
+      network,
+    ]
+  }
+
+  ipconfig0 = "ip=${lookup(var.{{ resource.name }}-ips, count.index)},gw={{ resource.network.gateway }}"
+
+  count        = {{ resource.count | default(1) }}
+  pool         = "{{ resource.pool | default(target_provider.vars.defaults.pool) }}"
+  onboot       = true
+  sshkeys = <<-EOT
+{% for key in target_provider.vars.ssh_keys %}
+    {{ key }}
+{% endfor %}
+  EOT
+}
+
+{% endfor %}
+{% for resource in target_provider_active_resources | selectattr('type', 'eq', 'vm') -%}
+resource "ansible_host" "{{ resource.name }}" {
+  for_each = {
+    for index, vm in {{ supported_resource_types[resource.type] }}.{{ resource.name }} : vm.name => lookup(var.{{ resource.name }}-ips, index)
+  }
+
+  name   = each.key
+  groups = {{ resource.groups | to_json }}
+
+  variables = {
+    ansible_host  = split("/", each.value)[0]
+    provider_name = "{{ target_provider_name }}"
+    provider_type = "{{ target_provider.type }}"
+    resource_type = "{{ resource.type }}"
+  }
+}
+
+{% endfor %}

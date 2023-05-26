@@ -10,7 +10,7 @@ resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
 }
 
 {% endfor %}
-{% for resource in target_provider_active_resources -%}
+{% for resource in target_provider_active_resources | selectattr('type', 'eq', 'droplet') -%}
 resource "ansible_host" "{{ resource.name }}" {
   for_each = {
     for index, droplet in {{ supported_resource_types[resource.type] }}.{{ resource.name }} : droplet.name => droplet.ipv4_address

@@ -2,7 +2,8 @@
 - name: define supported resource types
   set_fact:
     supported_resource_types:
-      lxc: proxmox_lxc
+      lxc: proxmox_lxc,
+      vm: proxmox_vm_qemu
 
 - name: check if each resource type exists
   assert:
@@ -22,3 +23,8 @@
   template:
     src: "{{ role_path }}/files/providers/proxmox/lxc.tf.j2"
     dest: "{{ target_provider_terraform_path }}/lxc.tf"
+
+- name: render vm.tf
+  template:
+    src: "{{ role_path }}/files/providers/proxmox/vm.tf.j2"
+    dest: "{{ target_provider_terraform_path }}/vm.tf"
