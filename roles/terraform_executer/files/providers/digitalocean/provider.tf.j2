@@ -12,5 +12,5 @@ terraform {
 }
 
 provider "digitalocean" {
-  token = "{{ target_provider.global.token }}"
+  token = "{{ target_provider.vars.token }}"
 }

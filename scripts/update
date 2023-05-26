@@ -20,5 +20,5 @@ fi
 
 
 ansible-playbook -i "localhost," update_resources.yaml -e "target_provider_name=$selected_provider" -e "destroy_mode=$destroy_mode" --vault-id demo@vault
-ansible-playbook -i terraform/$selected_provider/inventory.yaml "$@" wait_hosts_up.yaml -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" -e "ansible_python_interpreter=/usr/local/bin/python3"
-ansible-playbook -i terraform/$selected_provider/inventory.yaml "$@" site.yaml -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
+ansible-playbook -i terraform/$selected_provider/inventory.yaml "$@" wait_hosts_up.yaml -e "ansible_python_interpreter=/usr/local/bin/python3"
+ansible-playbook -i terraform/$selected_provider/inventory.yaml "$@" site.yaml

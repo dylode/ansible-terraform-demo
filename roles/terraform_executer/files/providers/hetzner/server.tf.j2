@@ -1,10 +1,10 @@
 {%- for resource in target_provider_active_resources | selectattr('type', 'eq', 'server') -%}
 resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
   image        = "{{ resource.image }}"
-  name         = "{{ resource.name }}-${count.index + 1}"
+  name         = "{{ target_provider.name }}-{{ resource.name }}-${count.index + 1}"
   location     = "{{ resource.location }}"
   server_type  = "{{ resource.server_type }}"
-  ssh_keys     = {{ target_provider.global.ssh_keys | to_json }}
+  ssh_keys     = {{ target_provider.vars.ssh_keys | to_json }}
   
   public_net {
     ipv4_enabled = true

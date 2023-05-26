@@ -1,41 +1,40 @@
 {%- for resource in target_provider_active_resources | selectattr('type', 'eq', 'lxc') -%}
 variable "{{ resource.name }}-ips" {
   default = {
-    {% for ip in resource.ip %}
+    {% for ip in resource.network.ip %}
         "{{ loop.index - 1 }}" = "{{ ip }}"
     {% endfor %}
   }
 }
 
 resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
-  target_node  = "{{ target_provider.global.target_node }}"
-  hostname     = "{{ resource.name }}-${count.index + 1}"
-  ostemplate   = "{{ resource.template_storage | default(target_provider.global.default_lxc_template_storage) }}:vztmpl/{{ resource.template }}"
+  target_node  = "{{ target_provider.vars.target_node }}"
+  hostname     = "{{ target_provider.name }}-{{ resource.name }}-${count.index + 1}"
+  ostemplate   = "{{ resource.template_storage | default(target_provider.vars.defaults.template_storage) }}:vztmpl/{{ resource.template }}"
   unprivileged = {{ resource.unprivileged | default(true) | lower }}
   count        = {{ resource.count | default(1) }}
-  pool         = "{{ resource.pool | default(target_provider.global.default_lxc_pool) }}"
+  pool         = "{{ resource.pool | default(target_provider.vars.defaults.pool) }}"
   start        = true
   onboot       = true
   ssh_public_keys = <<-EOT
-{% for key in target_provider.global.ssh_keys %}
+{% for key in target_provider.vars.ssh_keys %}
     {{ key }}
 {% endfor %}
   EOT
 
   rootfs {
-    storage = "{{ resource.volume_storage | default(target_provider.global.default_lxc_volume_storage) }}"
+    storage = "{{ resource.volume_storage | default(target_provider.vars.defaults.volume_storage) }}"
     size    = "{{ resource.size }}"
   }
 
   network {
-    name   = "{{ resource.network_name | default(target_provider.global.default_lxc_network_name) }}"
-    bridge = "{{ resource.network_bridge | default(target_provider.global.default_lxc_network_bridge) }}"
+    name   = "{{ resource.network.name | default(target_provider.vars.defaults.lxc_network.name) }}"
+    bridge = "{{ resource.network.bridge | default(target_provider.vars.defaults.lxc_network.bridge) }}"
     ip     = "${lookup(var.{{ resource.name }}-ips, count.index)}"
-    ip6    = "{{ resource.ip6[count.index] | default('auto') }}"
-    gw     = "{{ resource.gateway }}"
-    {% if resource.vlan_tag %}
-    tag    = "{{ resource.vlan_tag }}"
-    {% endif %}
+    gw     = "{{ resource.network.gateway }}"
+{% if resource.network.vlan_tag %}
+    tag    = "{{ resource.network.vlan_tag }}"
+{% endif %}
   }
 }
 

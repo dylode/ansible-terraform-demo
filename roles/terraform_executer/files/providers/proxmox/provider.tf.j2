@@ -12,7 +12,7 @@ terraform {
 }
 
 provider "proxmox" {
-    pm_api_url = "{{ target_provider.global.api_url }}"
-    pm_api_token_id = "{{ target_provider.global.token_id }}"
-    pm_api_token_secret = "{{ target_provider.global.token_secret }}"
+    pm_api_url = "{{ target_provider.vars.api_url }}"
+    pm_api_token_id = "{{ target_provider.vars.token_id }}"
+    pm_api_token_secret = "{{ target_provider.vars.token_secret }}"
 }

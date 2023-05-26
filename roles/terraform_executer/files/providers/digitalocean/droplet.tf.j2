@@ -1,10 +1,10 @@
 {%- for resource in target_provider_active_resources | selectattr('type', 'eq', 'droplet') -%}
 resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
   image    = "{{ resource.image }}"
-  name     = "{{ resource.name }}-${count.index + 1}"
+  name     = "{{ target_provider.name }}-{{ resource.name }}-${count.index + 1}"
   region   = "{{ resource.region }}"
   size     = "{{ resource.size }}"
-  ssh_keys = {{ target_provider.global.ssh_keys | to_json }}
+  ssh_keys = {{ target_provider.vars.ssh_keys | to_json }}
   tags     = {{ resource.groups | to_json }}
   count    = {{ resource.count | default(1) }}
 }

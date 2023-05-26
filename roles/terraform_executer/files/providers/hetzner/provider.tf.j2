@@ -12,5 +12,5 @@ terraform {
 }
 
 provider "hcloud" {
-    token = "{{ target_provider.global.token }}"
+    token = "{{ target_provider.vars.token }}"
 }
