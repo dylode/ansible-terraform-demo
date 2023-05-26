@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 providers=$(cat resources.yaml | yq -r '.providers[].name')
 

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+find ./terraform/ -type f ! -path '*/.*' ! -name '.terraform.lock.hcl' | while read -r path; do
+    ansible-vault decrypt --vault-id demo@vault $path 
+done

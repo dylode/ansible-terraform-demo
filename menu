@@ -8,7 +8,7 @@ fi
 action=$1
 
 if [ "$action" = "build" ]; then
-    docker build -t ansible-terraform-demo .
+    docker build -t ansible-terraform-demo --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) .
 fi
 
 if [ "$action" = "debug" ]; then
@@ -16,21 +16,21 @@ if [ "$action" = "debug" ]; then
 fi
 
 if [ "$action" = "update-resources" ]; then
-    docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_resources.sh
+    docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_resources.
 fi
 
 if [ "$action" = "encrypt" ]; then
-    docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/encrypt.sh
+    docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/encrypt
 fi
 
 if [ "$action" = "decrypt" ]; then
-    docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/decrypt.sh
+    docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/decrypt
 fi
 
 if [ "$action" = "update-site" ]; then
-    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/root/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_site.sh "${@:2}"
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/root/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_site "${@:2}"
 fi
 
 if [ "$action" = "update" ]; then
-    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/root/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update.sh "${@:2}"
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/root/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update "${@:2}"
 fi

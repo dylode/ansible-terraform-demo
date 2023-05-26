@@ -1,0 +1,17 @@
+terraform {
+  required_providers {
+    digitalocean = {
+      source  = "dutchis/terraform"
+      version = "1.1.8"
+    }
+    ansible = {
+      source  = "ansible/ansible"
+      version = "1.1.0"
+    }
+  }
+}
+
+provider "dutchis" {
+    dutchis_team_uuid = "{{ target_provider.global.team_uuid }}"
+    dutchis_api_token = "{{ target_provider.global.api_token }}"
+}
