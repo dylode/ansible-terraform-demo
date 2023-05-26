@@ -1,0 +1,30 @@
+{%- for resource in target_provider_active_resources | selectattr('type', 'eq', 'instance') -%}
+resource "{{ supported_resource_types[resource.type] }}" "{{ resource.name }}" {
+  image    = "{{ resource.image }}"
+  label    = "{{ target_provider.name }}-{{ resource.name }}-${count.index + 1}"
+  region   = "{{ resource.region }}"
+  type     = "{{ resource.instance_type }}"
+  authorized_keys = {{ target_provider.vars.ssh_keys | to_json }}
+  tags     = {{ resource.groups | to_json }}
+  count    = {{ resource.count | default(1) }}
+}
+
+{% endfor %}
+{% for resource in target_provider_active_resources | selectattr('type', 'eq', 'instance') -%}
+resource "ansible_host" "{{ resource.name }}" {
+  for_each = {
+    for index, instance in {{ supported_resource_types[resource.type] }}.{{ resource.name }} : instance.label => instance.ip_address
+  }
+
+  name   = each.key
+  groups = {{ resource.groups | to_json }}
+
+  variables = {
+    ansible_host  = each.value
+    provider_name = "{{ target_provider_name }}"
+    provider_type = "{{ target_provider.type }}"
+    resource_type = "{{ resource.type }}"
+  }
+}
+
+{% endfor %}

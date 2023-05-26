@@ -12,4 +12,7 @@
 - import_tasks: plan_proxmox.yaml
   when: target_provider.type == "proxmox"
 
+- import_tasks: plan_linode.yaml
+  when: target_provider.type == "linode"
+
 - import_tasks: execute_plan.yaml

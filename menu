@@ -38,3 +38,7 @@ fi
 if [ "$action" = "ansible-playbook-all" ]; then
     docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/ansible_playbook_all "${@:2}"
 fi
+
+if [ "$action" = "ansible-playbook" ]; then
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/ansible_playbook "${@:2}"
+fi

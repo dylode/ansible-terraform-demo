@@ -1,6 +1,14 @@
 #!/bin/sh
 
-find ./terraform/ -type f ! -path '*/.*' ! -name '.terraform.lock.hcl' | while read -r path; do
-    ansible-vault encrypt --vault-id demo@vault $path 
+path="./terraform/"
+if [ -n "$1" ]; then
+  path="./terraform/$1/"
+fi
+
+echo "encrypting"
+
+find $path -type f ! -path '*/.*' ! -name '.terraform.lock.hcl' | while read -r path; do
+    ansible-vault encrypt --vault-id demo@vault $path &>/dev/null
 done
 
+echo "encrypting done"
