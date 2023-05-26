@@ -2,7 +2,7 @@
 - name: define supported resource types
   set_fact:
     supported_resource_types:
-      lxc: proxmox_lxc,
+      lxc: proxmox_lxc
       vm: proxmox_vm_qemu
 
 - name: check if each resource type exists
