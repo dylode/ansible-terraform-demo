@@ -1,0 +1,32 @@
+---
+- name: select initial k3s server
+  set_fact:
+    k3s_initial_server: "{{ groups['k3s_server'][0] }}"
+  tags:
+    - always
+
+- import_tasks: init.yaml
+  when: inventory_hostname == k3s_initial_server
+
+- name: get IP address from first k3s-server
+  set_fact:
+    k3s_initial_server_ip: "{{ hostvars[k3s_initial_server]['ansible_host'] }}"
+
+- name: retrieve node token from first k3s-server
+  block:
+    - shell: cat /var/lib/rancher/k3s/server/node-token
+      register: node_token_file
+    - set_fact:
+        k3s_initial_server_node_token: "{{ node_token_file.stdout }}"
+  delegate_to: "{{ k3s_initial_server }}"
+
+- import_tasks: server.yaml
+  when: inventory_hostname in groups['k3s_server'] and inventory_hostname != k3s_initial_server
+
+- import_tasks: node.yaml
+  when: inventory_hostname in groups['k3s_node']
+
+- import_tasks: deploy_nginx.yaml
+  when: inventory_hostname == k3s_initial_server
+  tags:
+    - nginx

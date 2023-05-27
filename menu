@@ -34,3 +34,19 @@ fi
 if [ "$action" = "update-all" ]; then
     docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_all "${@:2}"
 fi
+
+if [ "$action" = "update-resources" ]; then
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_resources "${@:2}"
+fi
+
+if [ "$action" = "update-resources-all" ]; then
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_resources_all "${@:2}"
+fi
+
+if [ "$action" = "playbook" ]; then
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/playbook "${@:2}"
+fi
+
+if [ "$action" = "playbook-all" ]; then
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/playbook_all "${@:2}"
+fi

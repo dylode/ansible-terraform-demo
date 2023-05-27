@@ -16,25 +16,26 @@ providers:
       ssh_keys: 
         - f1:77:5a:66:bf:57:d0:a9:b1:8b:03:e1:7f:35:c8:62
     resources:
-      - name: webserver
-        state: present
+      - name: k3s-server
+        state: absent
         type: droplet
         image: debian-11-x64
         region: fra1
-        size: s-1vcpu-512mb-10gb
-        count: 2
+        size: s-2vcpu-4gb
+        count: 1
         groups:
-          - webserver
-          - monitored
-      - name: database
+          - k3s
+          - k3s_server
+      - name: k3s-node
         state: absent
         type: droplet
         image: debian-11-x64
         region: fra1
         size: s-1vcpu-512mb-10gb
+        count: 1
         groups:
-          - database
-          - monitored
+          - k3s
+          - k3s_node
   - name: hetzner01
     type: hetzner
     vars:
@@ -51,39 +52,39 @@ providers:
       ssh_keys:
         - dylan@dylan-mint
     resources:
-      - name: webserver
-        state: present
+      - name: k3s-server
+        state: absent
         type: server
         image: debian-11
         location: fsn1
-        server_type: cx11
-        count: 2
+        server_type: cx31
+        count: 1
         groups:
-          - webserver
-          - monitored
-      - name: database
+          - k3s
+          - k3s_server
+      - name: k3s-node
         state: absent
         type: server
         image: debian-11
         location: fsn1
         server_type: cx11
-        count: 3
+        count: 1
         groups:
-          - database
-          - monitored
+          - k3s
+          - k3s_node
   - name: linode01
     type: linode
     vars:
       token: !vault |
           $ANSIBLE_VAULT;1.2;AES256;demo
-          36313166393863373965356564363762346637353733663934623630613636663130643930356337
-          6536306666613235373465396131656334643737313864300a636330386566336338336362376432
-          63623866383538383136666334323762363231643135643364376332373432303961353639393535
-          3666313532656262610a666465633630363136383036663164383166333133346464636165623034
-          64363566306230323562653132366133333238323130366232333663663763643934323062373364
-          39353934616566346661333033356262343839353931623431393935383834336364373864643234
-          61616339356462343434353861396232616636366163363461306432303664653163623932663165
-          31393731613765376138
+          32363939316461376231656234303163383833396437356263333036376463323038303366393538
+          3131626165643638363239366139323632303362313732630a373233656539353330623862386665
+          62643134623531313334383134636562336465356433346432333365626266346134653031356237
+          3136666230333763350a356262633565303762323039303833656562336265633866626432326465
+          35313935373439653837613531633032643566306264623133323034653632363538343962343939
+          39313434306637313161616437636434323530366261666136393863616536363265663466366135
+          33346331343066363738383431643032633464396266653564636236316136623130666563346632
+          38396139346262326437
       ssh_keys:
         - !vault |
           $ANSIBLE_VAULT;1.2;AES256;demo
@@ -112,16 +113,26 @@ providers:
           66333230373733663664333936623063343037666163393864363232386633373639353561343539
           63303133333539623334
     resources:
-      - name: webserver
+      - name: k3s-server
         state: absent
         type: instance
-        count: 2
+        count: 1
+        image: linode/debian11
+        region: eu-west
+        instance_type: g6-standard-2
+        groups:
+          - k3s
+          - k3s_server
+      - name: k3s-node
+        state: absent
+        type: instance
+        count: 1
         image: linode/debian11
         region: eu-west
         instance_type: g6-nanode-1
         groups:
-          - monitored
-          - webserver
+          - k3s
+          - k3s_node
   - name: pve01
     type: proxmox
     vars:

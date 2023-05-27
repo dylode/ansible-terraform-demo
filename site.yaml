@@ -7,26 +7,10 @@
   tags:
     - base
 
-- name: run webserver role
-  hosts: webserver
+- name: run k3s role
+  hosts: k3s
   become: True
   roles:
-    - webserver
+    - k3s
   tags:
-    - webserver
-
-- name: run monitored role
-  hosts: monitored
-  become: True
-  roles:
-    - monitored
-  tags:
-    - monitored
-
-- name: run database role
-  hosts: database
-  become: True
-  roles:
-    - database
-  tags:
-    - database
+    - k3s

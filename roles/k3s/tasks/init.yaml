@@ -1,0 +1,11 @@
+---
+- name: check if the initial k3s-server already has a node token
+  stat:
+    path: /var/lib/rancher/k3s/server/node-token
+  register: node_token_file
+  delegate_to: "{{ k3s_initial_server }}"
+
+- name: initialize first k3s-server
+  shell: curl -fL https://get.k3s.io | INSTALL_K3S_VERSION={{ k3s_version }} sh -s - server --cluster-init
+  when: not node_token_file.stat.exists
+  delegate_to: "{{ k3s_initial_server }}"

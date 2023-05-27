@@ -1,0 +1,9 @@
+---
+- name: check if k3s is installed
+  stat:
+    path: /var/lib/rancher/k3s/server/node-token
+  register: k3s_installed
+
+- name: install k3 server on the other nodes
+  shell: curl -sfL https://get.k3s.io | K3S_URL=https://{{ k3s_initial_server_ip }}:6443 K3S_TOKEN={{ k3s_initial_server_node_token }} INSTALL_K3S_VERSION={{ k3s_version }} sh -s - agent
+  when: not k3s_installed.stat.exists

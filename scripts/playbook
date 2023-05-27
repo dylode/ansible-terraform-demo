@@ -1,0 +1,19 @@
+#!/bin/sh
+
+providers=$(cat resources.yaml | yq -r '.providers[].name')
+
+selected_provider=$(echo "$providers" | fzf --prompt="Select provider: ")
+echo "Selected provider: $selected_provider"
+
+destroy_mode=false
+read -r -p "Do you expect to delete resources? [y/N] " response
+if [[ "$response" == "yes" || "$response" == "y" ]]; then
+    destroy_mode=true
+fi
+
+read -r -p "Are you sure you want to proceed? [y/N] " response
+if [[ "$response" != "yes" && "$response" != "y" ]]; then
+    exit 1
+fi
+
+ansible-playbook -i terraform/$selected_provider/inventory.yaml $@

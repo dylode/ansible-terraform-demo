@@ -9,6 +9,7 @@
       - htop
       - git
       - tmux
+      - python3-pip
     state: present
 
 - name: create user accounts
@@ -27,3 +28,6 @@
     mode: 0755
   notify: restart ssh service
 
+- name: set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
