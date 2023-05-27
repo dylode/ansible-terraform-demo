@@ -50,6 +50,7 @@ resource "ansible_host" "{{ resource.name }}" {
 
   variables = {
     ansible_host  = split("/", each.value)[0]
+    ansible_user  = "root"
     provider_name = "{{ target_provider_name }}"
     provider_type = "{{ target_provider.type }}"
     resource_type = "{{ resource.type }}"

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+truncate -s 0 /app/ssh_config.conf
+
+providers=$(cat resources.yaml | yq -r '.providers[].name')
+
+for provider in $providers; do
+    aitsc /app/terraform/$provider/inventory.yaml -o /app/ssh_config.conf &> /dev/null
+done

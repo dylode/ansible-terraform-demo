@@ -8,7 +8,7 @@ fi
 action=$1
 
 if [ "$action" = "build" ]; then
-    docker build -t ansible-terraform-demo --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) .
+    docker build -t ansible-terraform-demo --build-arg USER_ID=$(id -u) .
 fi
 
 if [ "$action" = "debug" ]; then
@@ -17,6 +17,10 @@ fi
 
 if [ "$action" = "update-resources" ]; then
     docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_resources
+fi
+
+if [ "$action" = "update-ssh-config" ]; then
+    docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_ssh_config
 fi
 
 if [ "$action" = "encrypt" ]; then

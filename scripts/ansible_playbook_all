@@ -7,6 +7,4 @@ for provider in $providers; do
   inventories="$inventories -i terraform/$provider/inventory.yaml"
 done
 
-./scripts/decrypt
 $(echo "ansible-playbook$inventories $@")
-./scripts/encrypt
