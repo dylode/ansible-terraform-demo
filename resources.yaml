@@ -62,7 +62,7 @@ providers:
           - webserver
           - monitored
       - name: database
-        state: present
+        state: absent
         type: server
         image: debian-11
         location: fsn1

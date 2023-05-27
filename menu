@@ -15,10 +15,6 @@ if [ "$action" = "debug" ]; then
     docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh
 fi
 
-if [ "$action" = "update-resources" ]; then
-    docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_resources
-fi
-
 if [ "$action" = "update-ssh-config" ]; then
     docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_ssh_config
 fi
@@ -31,18 +27,10 @@ if [ "$action" = "decrypt" ]; then
     docker run -v "$(pwd):/app" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/decrypt
 fi
 
-if [ "$action" = "update-site" ]; then
-    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_site "${@:2}"
-fi
-
 if [ "$action" = "update" ]; then
     docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update "${@:2}"
 fi
 
-if [ "$action" = "ansible-playbook-all" ]; then
-    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/ansible_playbook_all "${@:2}"
-fi
-
-if [ "$action" = "ansible-playbook" ]; then
-    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/ansible_playbook "${@:2}"
+if [ "$action" = "update-all" ]; then
+    docker run --network host -v "$(pwd):/app" -v "/home/$USER/.ssh/:/home/user/.ssh/" -w "/app/" -it ansible-terraform-demo /bin/sh scripts/update_all "${@:2}"
 fi

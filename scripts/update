@@ -17,6 +17,6 @@ if [[ "$response" != "yes" && "$response" != "y" ]]; then
 fi
 
 ansible-playbook -i "localhost," update_resources.yaml -e "target_provider_name=$selected_provider" -e "destroy_mode=$destroy_mode" --vault-id demo@vault
-ansible-playbook -i terraform/$selected_provider/inventory.yaml "$@" wait_hosts_up.yaml -e "ansible_python_interpreter=/usr/local/bin/python3"
-ansible-playbook -i terraform/$selected_provider/inventory.yaml "$@" site.yaml
 scripts/update_ssh_config
+ansible-playbook -i terraform/$selected_provider/inventory.yaml wait_hosts_up.yaml
+ansible-playbook -i terraform/$selected_provider/inventory.yaml $@

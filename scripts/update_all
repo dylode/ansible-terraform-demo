@@ -1,0 +1,25 @@
+#!/bin/sh
+providers=$(cat resources.yaml | yq -r '.providers[].name')
+destroy_mode=false
+
+read -r -p "Do you expect to delete resources? [y/N] " response
+if [[ "$response" == "yes" || "$response" == "y" ]]; then
+    destroy_mode=true
+fi
+
+read -r -p "Are you sure you want to proceed? [y/N] " response
+if [[ "$response" != "yes" && "$response" != "y" ]]; then
+    exit 1
+fi
+
+inventories=""
+
+for provider in $providers; do
+  ansible-playbook -i "localhost," update_resources.yaml -e "target_provider_name=$provider" -e "destroy_mode=$destroy_mode" --vault-id demo@vault
+  inventories="$inventories -i terraform/$provider/inventory.yaml"
+done
+
+scripts/update_ssh_config
+
+$(echo "ansible-playbook$inventories wait_hosts_up.yaml")
+$(echo "ansible-playbook$inventories $@")
