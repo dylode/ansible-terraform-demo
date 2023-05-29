@@ -2,3 +2,4 @@ vault
 .terraform
 .terraform.lock.hcl
 terraform/**/inventory.yaml
+ssh_config.conf
